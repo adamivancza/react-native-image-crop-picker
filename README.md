@@ -118,6 +118,8 @@ ImagePicker.clean().then(() => {
 | waitAnimationEnd (ios only)             |           bool (default true)            | Promise will resolve/reject once ViewController `completion` block is called |
 | smartAlbums (ios only)                  | array ([supported values](https://github.com/ivpusic/react-native-image-crop-picker/blob/master/README.md#smart-album-types-ios)) (default ['UserLibrary', 'PhotoStream', 'Panoramas', 'Videos', 'Bursts']) | List of smart albums to choose from      |
 | useFrontCamera                          |           bool (default false)           | Whether to default to the front/'selfie' camera when opened |
+| videoQuality                            |           string (default high)           | Quality of video. Can be set to 'low' or 'medium' (iOS only) to decrease quality. |
+| durationLimit                           |           number (default none)           | Limit length of video recorded. Might not supported on some Android devices. |
 | compressVideoPreset (ios only)          |      string (default MediumQuality)      | Choose which preset will be used for video compression |
 | compressImageMaxWidth                   |          number (default none)           | Compress image with maximum width        |
 | compressImageMaxHeight                  |          number (default none)           | Compress image with maximum height       |

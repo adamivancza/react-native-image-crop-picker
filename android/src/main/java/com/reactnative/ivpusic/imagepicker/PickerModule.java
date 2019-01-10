@@ -77,6 +77,8 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
     private boolean enableRotationGesture = false;
     private boolean disableCropperColorSetters = false;
     private boolean useFrontCamera = false;
+    private int videoQuality = 1;
+    private int videoDurationLimit = 0;
     private ReadableMap options;
 
     //Grey 800
@@ -134,6 +136,8 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
         enableRotationGesture = options.hasKey("enableRotationGesture") ? options.getBoolean("enableRotationGesture") : false;
         disableCropperColorSetters = options.hasKey("disableCropperColorSetters") ? options.getBoolean("disableCropperColorSetters") : false;
         useFrontCamera = options.hasKey("useFrontCamera") ? options.getBoolean("useFrontCamera") : false;
+        videoQuality = options.hasKey("videoQuality") && options.getString("videoQuality").equals("low") ? 0 : 1;
+        videoDurationLimit = options.hasKey("durationLimit") ? options.getInt("durationLimit") : 0;
         this.options = options;
     }
 
@@ -321,6 +325,12 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
                 cameraIntent.putExtra("android.intent.extras.CAMERA_FACING", 1);
                 cameraIntent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
                 cameraIntent.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
+            }
+
+            cameraIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, this.videoQuality);
+            if (this.videoDurationLimit > 0)
+            {
+                cameraIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, this.videoDurationLimit);
             }
 
             if (cameraIntent.resolveActivity(activity.getPackageManager()) == null) {

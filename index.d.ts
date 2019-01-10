@@ -20,6 +20,8 @@ declare module "react-native-image-crop-picker" {
         waitAnimationEnd?: boolean;
         smartAlbums?: string[];
         useFrontCamera?: boolean;
+        videoQuality?: string;
+        durationLimit?: number;
         compressVideoPreset?: string;
         compressImageMaxWidth?: number;
         compressImageMaxHeight?: number;

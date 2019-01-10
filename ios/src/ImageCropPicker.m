@@ -176,24 +176,32 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
         picker.sourceType = UIImagePickerControllerSourceTypeCamera;
 
         NSString *mediaType = [self.options objectForKey:@"mediaType"];
-        if ([mediaType isEqualToString:@"video"]) {
-            NSArray *availableTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
+        if ([mediaType isEqualToString:@"video"]
+            || [mediaType isEqualToString:@"any"]) {
 
-            if ([availableTypes containsObject:(NSString *)kUTTypeMovie]) {
-                picker.mediaTypes = [[NSArray alloc] initWithObjects:(NSString *)kUTTypeMovie, nil];
+            if ([[self.options objectForKey:@"videoQuality"] isEqualToString:@"medium"]) {
+                picker.videoQuality = UIImagePickerControllerQualityTypeMedium;;
+            }
+            else if ([[self.options objectForKey:@"videoQuality"] isEqualToString:@"low"]) {
+                picker.videoQuality = UIImagePickerControllerQualityTypeLow;
+            }
+            else {
                 picker.videoQuality = UIImagePickerControllerQualityTypeHigh;
             }
-        } else if ([mediaType isEqualToString:@"any"]) {
-            NSArray *availableTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
+
+            id durationLimit = [self.options objectForKey:@"durationLimit"];
+            if (durationLimit) {
+                picker.videoMaximumDuration = [durationLimit doubleValue];
+            }
 
             NSMutableArray* types = [NSMutableArray array];
-            [types addObject:(NSString *) kUTTypeImage];
-
+            if ([mediaType isEqualToString:@"any"]) {
+                [types addObject:(NSString *) kUTTypeImage];
+            }
+            NSArray *availableTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
             if ([availableTypes containsObject:(NSString *)kUTTypeMovie]) {
                 [types addObject:(NSString *) kUTTypeMovie];
-                picker.videoQuality = UIImagePickerControllerQualityTypeHigh;
             }
-
             picker.mediaTypes = [types copy];
         }
 
