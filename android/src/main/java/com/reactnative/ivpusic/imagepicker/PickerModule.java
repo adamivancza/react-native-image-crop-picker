@@ -18,6 +18,7 @@ import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.webkit.MimeTypeMap;
 import android.content.ContentResolver;
+import android.content.Context;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Callback;
@@ -777,39 +778,34 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
 
     private File createImageFile() throws IOException {
 
-        String imageFileName = "image-" + UUID.randomUUID().toString();
-        File path = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-
-        if (!path.exists() && !path.isDirectory()) {
-            path.mkdirs();
-        }
-
-        File image = File.createTempFile(imageFileName, ".jpg", path);
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentMediaPath = "file:" + image.getAbsolutePath();
-
-        return image;
-
+        return createFile("image-", ".jpg");
+        
     }
 
     private File createVideoFile() throws IOException {
 
-        String videoFileName = "video-" + UUID.randomUUID().toString();
-        File path = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
+        return createFile("video-", ".mp4");
+
+    }
+
+    private File createFile(String prefix, String extension) throws IOException {
+
+        String fileName = prefix + UUID.randomUUID().toString();
+        File path = this.reactContext.getExternalFilesDirs(Environment.DIRECTORY_PICTURES)[0];
+        path = new File(path, "react-native-image-crop-picker");
 
         if (!path.exists() && !path.isDirectory()) {
             path.mkdirs();
+            File noMediaFile = new File(path, ".NOMEDIA");
+            noMediaFile.createNewFile();
         }
 
-        File video = File.createTempFile(videoFileName, ".mp4", path);
+        File file = File.createTempFile(fileName, extension, path);
 
         // Save a file: path for use with ACTION_VIEW intents
-        mCurrentMediaPath = "file:" + video.getAbsolutePath();
+        mCurrentMediaPath = "file:" + file.getAbsolutePath();
 
-        return video;
+        return file;
 
     }
 
