@@ -267,8 +267,10 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
 }
 
 - (NSString*) getTmpDirectory {
-    NSString *TMP_DIRECTORY = @"react-native-image-crop-picker/";
-    NSString *tmpFullPath = [NSTemporaryDirectory() stringByAppendingString:TMP_DIRECTORY];
+    NSString *TMP_DIRECTORY = @"/react-native-image-crop-picker/";
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *tmpFullPath = [documentsDirectory stringByAppendingString:TMP_DIRECTORY];
 
     BOOL isDir;
     BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:tmpFullPath isDirectory:&isDir];
@@ -488,6 +490,9 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
 
     [self.compression compressVideo:sourceURL outputURL:outputURL withOptions:self.options handler:^(AVAssetExportSession *exportSession) {
         if (exportSession.status == AVAssetExportSessionStatusCompleted) {
+            [outputURL setResourceValue: [NSNumber numberWithBool: YES]
+                                                   forKey: NSURLIsExcludedFromBackupKey error: nil];
+            
             AVAsset *compressedAsset = [AVAsset assetWithURL:outputURL];
             AVAssetTrack *track = [[compressedAsset tracksWithMediaType:AVMediaTypeVideo] firstObject];
 
@@ -956,6 +961,10 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
     if (!status) {
         return nil;
     }
+    
+    NSError *error = nil;
+    [[NSURL fileURLWithPath:filePath] setResourceValue: [NSNumber numberWithBool: YES]
+                                           forKey: NSURLIsExcludedFromBackupKey error: &error];
 
     return filePath;
 }
