@@ -95,6 +95,10 @@ RCT_EXPORT_MODULE();
                                 @"cropperChooseText": @"Choose"
                                 };
         self.compression = [[Compression alloc] init];
+        self.picker = [[UIImagePickerController alloc] init];
+        self.picker.delegate = self;
+        self.picker.allowsEditing = NO;
+        self.picker.sourceType = UIImagePickerControllerSourceTypeCamera;
     }
 
     return self;
@@ -170,28 +174,23 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
             return;
         }
 
-        UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-        picker.delegate = self;
-        picker.allowsEditing = NO;
-        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
-
         NSString *mediaType = [self.options objectForKey:@"mediaType"];
         if ([mediaType isEqualToString:@"video"]
             || [mediaType isEqualToString:@"any"]) {
 
             if ([[self.options objectForKey:@"videoQuality"] isEqualToString:@"medium"]) {
-                picker.videoQuality = UIImagePickerControllerQualityTypeMedium;;
+                self.picker.videoQuality = UIImagePickerControllerQualityTypeMedium;;
             }
             else if ([[self.options objectForKey:@"videoQuality"] isEqualToString:@"low"]) {
-                picker.videoQuality = UIImagePickerControllerQualityTypeLow;
+                self.picker.videoQuality = UIImagePickerControllerQualityTypeLow;
             }
             else {
-                picker.videoQuality = UIImagePickerControllerQualityTypeHigh;
+                self.picker.videoQuality = UIImagePickerControllerQualityTypeHigh;
             }
 
             id durationLimit = [self.options objectForKey:@"durationLimit"];
             if (durationLimit) {
-                picker.videoMaximumDuration = [durationLimit doubleValue];
+                self.picker.videoMaximumDuration = [durationLimit doubleValue];
             }
 
             NSMutableArray* types = [NSMutableArray array];
@@ -202,15 +201,15 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
             if ([availableTypes containsObject:(NSString *)kUTTypeMovie]) {
                 [types addObject:(NSString *) kUTTypeMovie];
             }
-            picker.mediaTypes = [types copy];
+            self.picker.mediaTypes = [types copy];
         }
 
         if ([[self.options objectForKey:@"useFrontCamera"] boolValue]) {
-            picker.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+            self.picker.cameraDevice = UIImagePickerControllerCameraDeviceFront;
         }
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[self getRootVC] presentViewController:picker animated:YES completion:nil];
+            [[self getRootVC] presentViewController:self.picker animated:YES completion:nil];
         });
     }];
 #endif
