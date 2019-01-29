@@ -175,6 +175,7 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
         }
 
         NSString *mediaType = [self.options objectForKey:@"mediaType"];
+        NSMutableArray* types = [NSMutableArray array];
         if ([mediaType isEqualToString:@"video"]
             || [mediaType isEqualToString:@"any"]) {
 
@@ -192,8 +193,7 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
             if (durationLimit) {
                 self.picker.videoMaximumDuration = [durationLimit doubleValue];
             }
-
-            NSMutableArray* types = [NSMutableArray array];
+            
             if ([mediaType isEqualToString:@"any"]) {
                 [types addObject:(NSString *) kUTTypeImage];
             }
@@ -201,8 +201,10 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
             if ([availableTypes containsObject:(NSString *)kUTTypeMovie]) {
                 [types addObject:(NSString *) kUTTypeMovie];
             }
-            self.picker.mediaTypes = [types copy];
+        } else {
+            [types addObject:(NSString *) kUTTypeImage];
         }
+        self.picker.mediaTypes = [types copy];
 
         if ([[self.options objectForKey:@"useFrontCamera"] boolValue]) {
             self.picker.cameraDevice = UIImagePickerControllerCameraDeviceFront;
