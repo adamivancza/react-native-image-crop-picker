@@ -320,6 +320,16 @@ RCT_REMAP_METHOD(clean, resolver:(RCTPromiseResolveBlock)resolve
     }
 }
 
+RCT_REMAP_METHOD(getStoragePath,
+                 getStoragePathWithresolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject) {
+    
+    NSString* tmpDirPath = [self getTmpDirectory];
+    
+    resolve(tmpDirPath);
+    
+}
+
 RCT_EXPORT_METHOD(openPicker:(NSDictionary *)options
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {

@@ -60,6 +60,7 @@ declare module "react-native-image-crop-picker" {
     export function openCropper(options: Options): Promise<Image>;
     export function clean(): Promise<void>;
     export function cleanSingle(path: string): Promise<void>;
+    export function getStoragePath(): Promise<string>;
 
     export interface ImageCropPicker {
         openPicker(options: Options): Promise<Image | Image[]>;
@@ -67,6 +68,7 @@ declare module "react-native-image-crop-picker" {
         openCropper(options: Options): Promise<Image>;
         clean(): Promise<void>;
         cleanSingle(path: string): Promise<void>;
+        getStoragePath(): Promise<string>;
     }
 
     const ImageCropPicker: ImageCropPicker;

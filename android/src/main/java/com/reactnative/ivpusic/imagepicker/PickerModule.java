@@ -65,6 +65,7 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
     private static final String E_CANNOT_LAUNCH_CAMERA = "E_CANNOT_LAUNCH_CAMERA";
     private static final String E_PERMISSIONS_MISSING = "E_PERMISSION_MISSING";
     private static final String E_ERROR_WHILE_CLEANING_FILES = "E_ERROR_WHILE_CLEANING_FILES";
+    private static final String E_ERROR_STORAGE_DIRECTORY = "E_ERROR_STORAGE_DIRECTORY";
 
     private String mediaType = "any";
     private boolean multiple = false;
@@ -220,6 +221,19 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
                 return null;
             }
         });
+    }
+
+    @ReactMethod
+    public void getStoragePath(final Promise promise) {
+
+        try {
+            File path = getStoragePathInternal();
+            promise.resolve(path.toString());
+        }  catch (Exception ex) {
+            ex.printStackTrace();
+            promise.reject(E_ERROR_STORAGE_DIRECTORY, ex.getMessage());
+        }
+
     }
 
     private void permissionsCheck(final Activity activity, final Promise promise, final List<String> requiredPermissions, final Callable<Void> callback) {
@@ -791,6 +805,17 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
     private File createFile(String prefix, String extension) throws IOException {
 
         String fileName = prefix + UUID.randomUUID().toString();
+        File file = File.createTempFile(fileName, extension, getStoragePathInternal());
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentMediaPath = "file:" + file.getAbsolutePath();
+
+        return file;
+
+    }
+
+    private File getStoragePathInternal() throws IOException {
+
         File path = this.reactContext.getExternalFilesDirs(Environment.DIRECTORY_PICTURES)[0];
         path = new File(path, "react-native-image-crop-picker");
 
@@ -800,13 +825,7 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
             noMediaFile.createNewFile();
         }
 
-        File file = File.createTempFile(fileName, extension, path);
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentMediaPath = "file:" + file.getAbsolutePath();
-
-        return file;
-
+        return path;
     }
 
     private static WritableMap getCroppedRectMap(Intent data) {
