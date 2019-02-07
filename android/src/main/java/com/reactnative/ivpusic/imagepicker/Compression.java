@@ -38,10 +38,10 @@ class Compression {
         }
 
         Log.d("image-crop-picker", "Image compression activated");
+        File image = new File(originalImagePath);
         Compressor compressor = new Compressor(activity)
                 .setCompressFormat(Bitmap.CompressFormat.JPEG)
-                .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_PICTURES).getAbsolutePath());
+                .setDestinationDirectoryPath(image.getParent());
 
         if (quality == null) {
             Log.d("image-crop-picker", "Compressing image with quality 100");
@@ -60,8 +60,6 @@ class Compression {
             Log.d("image-crop-picker", "Compressing image with max height " + maxHeight);
             compressor.setMaxHeight(maxHeight);
         }
-
-        File image = new File(originalImagePath); 
 
         String[] paths = image.getName().split("\\.(?=[^\\.]+$)");
         String compressedFileName = paths[0] + "-compressed";
